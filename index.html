@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <meta name="theme-color" content="#2a5298">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -134,13 +136,25 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(-30px) translateX(20px); }
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            50% {
+                transform: translateY(-30px) translateX(20px);
+            }
         }
 
         @keyframes rotate3d {
-            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+            0% {
+                transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            }
+
+            100% {
+                transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+            }
         }
 
         .container {
@@ -163,6 +177,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -804,6 +819,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -1255,6 +1271,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- 3D Background Elements -->
     <div class="background-3d">
@@ -1333,13 +1350,8 @@
                             <i class="fas fa-tag"></i>
                             Category
                         </label>
-                        <input 
-                            type="text" 
-                            id="category" 
-                            placeholder="Type or select category"
-                            list="categoryOptions"
-                            required
-                        >
+                        <input type="text" id="category" placeholder="Type or select category" list="categoryOptions"
+                            required>
                         <datalist id="categoryOptions">
                             <option value="Food">
                             <option value="Transport">
@@ -1389,7 +1401,7 @@
         // Dark Mode Toggle
         const darkModeToggle = document.getElementById('darkModeToggle');
         const htmlElement = document.documentElement;
-        
+
         // Check for saved dark mode preference
         const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
         if (isDarkMode) {
@@ -1401,10 +1413,10 @@
         darkModeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
-            
+
             // Update button icon
             darkModeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            
+
             // Save preference
             localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
         });
@@ -1435,10 +1447,18 @@
         const yearTotalDisplay = document.getElementById('yearTotal');
         const expenseToggle = document.getElementById('expenseToggle');
 
+        // Function to get today's date dynamically (handles timezone correctly)
+        function getTodayDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         // Set today's date as default
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.value = today;
-        viewDateInput.value = today;
+        dateInput.value = getTodayDate();
+        viewDateInput.value = getTodayDate();
 
         // Load expenses from localStorage
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
@@ -1446,9 +1466,10 @@
         // Update today button text and icon based on selected date
         function updateTodayButton() {
             const selectedDate = viewDateInput.value;
+            const today = getTodayDate(); // Get current today's date dynamically
             const todayBtnIcon = document.querySelector('.today-btn i');
             const todayBtnText = document.getElementById('todayBtnText');
-            
+
             if (selectedDate === today) {
                 todayBtnText.textContent = 'Today';
                 todayBtnIcon.classList.add('hidden');
@@ -1470,19 +1491,20 @@
             const year = parseInt(parts[0]);
             const month = parseInt(parts[1]);
             const day = parseInt(parts[2]);
-            
+
             const date = new Date(year, month - 1, day + days);
             const yyyy = date.getFullYear();
             const mm = String(date.getMonth() + 1).padStart(2, '0');
             const dd = String(date.getDate()).padStart(2, '0');
-            
+
             return `${yyyy}-${mm}-${dd}`;
         }
 
         // Navigate one day at a time toward today
         function navigateDate() {
             const selectedDate = viewDateInput.value;
-            
+            const today = getTodayDate(); // Get current today's date dynamically
+
             if (selectedDate < today) {
                 const newDate = addDaysToDate(selectedDate, 1);
                 viewDateInput.value = newDate;
@@ -1490,7 +1512,7 @@
                 const newDate = addDaysToDate(selectedDate, -1);
                 viewDateInput.value = newDate;
             }
-            
+
             displayExpenses();
         }
 
@@ -1503,6 +1525,7 @@
         // Display expenses for selected date
         function displayExpenses() {
             const selectedDate = viewDateInput.value;
+            const today = getTodayDate(); // Get current today's date dynamically
             const selectedExpenses = expenses.filter(exp => exp.date === selectedDate);
 
             const isToday = selectedDate === today;
@@ -1518,15 +1541,17 @@
                     </div>
                 `;
                 totalAmountDisplay.textContent = '0.00';
+                updateStats();
+
                 return;
             }
 
-            selectedExpenses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            selectedExpenses.sort((a, b) => b.timestamp - a.timestamp);
 
             expensesList.innerHTML = selectedExpenses
                 .map((exp) => {
                     const icon = getCategoryIcon(exp.category);
-                    const date = new Date(exp.date).toLocaleDateString('en-US', {
+                    const date = new Date(exp.date + 'T00:00:00').toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric'
@@ -1601,20 +1626,22 @@
 
         // Update monthly and yearly statistics
         function updateStats() {
-            const selectedDate = new Date(viewDateInput.value);
-            const currentMonth = selectedDate.getMonth();
-            const currentYear = selectedDate.getFullYear();
+            // Always show stats for current real-time month and year, independent of selected view date
+            const todayStr = getTodayDate();
+            const [currentYearStr, currentMonthStr] = todayStr.split('-');
+            const currentYear = parseInt(currentYearStr);
+            const currentMonth = parseInt(currentMonthStr); // 1-12
 
             const monthExpenses = expenses.filter(exp => {
-                const expDate = new Date(exp.date);
-                return expDate.getMonth() === currentMonth && expDate.getFullYear() === currentYear;
+                const [expYearStr, expMonthStr] = exp.date.split('-');
+                return parseInt(expMonthStr) === currentMonth && parseInt(expYearStr) === currentYear;
             });
             const monthTotal = monthExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
             monthTotalDisplay.textContent = monthTotal.toFixed(2);
 
             const yearExpenses = expenses.filter(exp => {
-                const expDate = new Date(exp.date);
-                return expDate.getFullYear() === currentYear;
+                const [expYearStr] = exp.date.split('-');
+                return parseInt(expYearStr) === currentYear;
             });
             const yearTotal = yearExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
             yearTotalDisplay.textContent = yearTotal.toFixed(2);
@@ -1639,12 +1666,17 @@
                 return;
             }
 
+            // Properly create timestamp from date string (handles timezone correctly)
+            const [year, month, day] = date.split('-').map(Number);
+            const expenseDate = new Date(year, month - 1, day);
+            const now = new Date();
+
             const expense = {
                 id: Date.now().toString(),
                 amount,
                 category,
                 date,
-                timestamp: new Date(date + 'T' + new Date().toTimeString().slice(0, 8)).getTime(),
+                timestamp: expenseDate.getTime() + (now.getHours() * 3600000 + now.getMinutes() * 60000 + now.getSeconds() * 1000),
             };
 
             expenses.push(expense);
@@ -1661,9 +1693,10 @@
 
             amountInput.value = '';
             categoryInput.value = '';
-            dateInput.value = today;
+            dateInput.value = getTodayDate();
             amountInput.focus();
 
+            const today = getTodayDate();
             if (viewDateInput.value === today) {
                 displayExpenses();
             }
@@ -1700,7 +1733,7 @@
                 if (result.isConfirmed) {
                     expenses = expenses.filter((exp) => exp.id !== id);
                     localStorage.setItem('expenses', JSON.stringify(expenses));
-                    
+
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted!',
@@ -1709,7 +1742,7 @@
                         showConfirmButton: false,
                         confirmButtonColor: '#2a5298'
                     });
-                    
+
                     displayExpenses();
                 }
             });
@@ -1733,10 +1766,23 @@
         // Initial display
         displayExpenses();
         updateTodayButton();
-        
+
         // Close expenses section by default
         expensesList.classList.add('collapsed');
         expenseToggle.classList.add('collapsed');
+
+        // Optional: Check for date change at midnight (updates the UI if page is left open)
+        let lastKnownToday = getTodayDate();
+        setInterval(() => {
+            const newToday = getTodayDate();
+            if (newToday !== lastKnownToday) {
+                lastKnownToday = newToday;
+                // Refresh the display if page is left open past midnight
+                updateTodayButton();
+                displayExpenses();
+            }
+        }, 60000); // Check every minute
     </script>
 </body>
+
 </html>
